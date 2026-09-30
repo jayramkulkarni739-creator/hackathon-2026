@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaSphere | 3D Student Tech Nexus & Workshop Platform</title>
+  <meta name="description" content="NovaSphere is an interactive 3D student tech nexus featuring hands-on workshops, autonomous AI labs, hackathons, and real-time FastAPI integration.">
+  
+  <!-- Futuristic Google Fonts: Orbitron (Headings) + Space Grotesk (Body) + JetBrains Mono (Code/IDs) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Three.js (Optional CDN for accelerated 3D WebGL; fallback native 3D engine included) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 3D Spatial Particle Canvas Background -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Cybernetic Scanline Overlay -->
+  <div class="scanline-overlay" aria-hidden="true"></div>
+
+  <!-- Ambient Holographic Glow Lights -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+  <div class="ambient-glow glow-3" aria-hidden="true"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-logo" title="NovaSphere 3D Tech Nexus">
+        <span class="logo-icon">🪐</span>
+        <span class="logo-text">Nova<span>Sphere</span></span>
+        <span class="logo-badge">3D NEXUS</span>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Live API Status Indicator -->
+        <div class="api-status-badge" id="api-status-badge" title="FastAPI Backend Health Status">
+          <span class="status-pulse" id="status-pulse"></span>
+          <span class="status-label" id="status-label">Checking Backend...</span>
+        </div>
+
+        <!-- Audio FX Toggle -->
+        <button id="sound-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle audio effects" title="Toggle Futuristic Audio FX">
+          <span class="nav-control-icon" id="sound-icon">🔊</span>
+        </button>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button id="theme-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle visual theme" title="Toggle Dark/Light Mode">
+          <span class="nav-control-icon" id="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Interactive 3D Spatial Core -->
+  <header class="hero-section">
+    <div class="hero-container">
+      
+      <!-- Left Column: Hero Information -->
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-sparkle">🚀</span> 2026 Campus Innovation Matrix
+        </div>
+        
+        <h1 class="hero-title">
+          NovaSphere<br>
+          <span class="gradient-text">3D Student Tech Nexus</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          An autonomous launchpad for student engineers. Explore spatial web graphics, artificial intelligence agents, cloud infrastructure, and live hackathons — powered by Python FastAPI.
+        </p>
+
+        <!-- Interactive Next Event Countdown Widget -->
+        <div class="countdown-widget" id="countdown-widget">
+          <div class="countdown-header">
+            <span class="pulse-dot"></span>
+            <span class="countdown-title">NEXT WORKSHOP LAUNCH IN</span>
+          </div>
+          <div class="countdown-timer" id="countdown-timer">
+            <div class="time-box"><span id="cd-days">00</span><label>DAYS</label></div>
+            <span class="time-sep">:</span>
+            <div class="time-box"><span id="cd-hours">00</span><label>HOURS</label></div>
+            <span class="time-sep">:</span>
+            <div class="time-box"><span id="cd-mins">00</span><label>MINS</label></div>
+            <span class="time-sep">:</span>
+            <div class="time-box"><span id="cd-secs">00</span><label>SECS</label></div>
+          </div>
+          <div class="countdown-event-name" id="countdown-event-name">Synchronizing with FastAPI...</div>
+        </div>
+
+        <!-- Hero CTA Group -->
+        <div class="hero-cta-group">
+          <button id="hero-load-btn" class="btn btn-primary btn-glow" type="button">
+            <span>⚡ Load Live Events</span>
+          </button>
+          <a href="#registration-section" class="btn btn-secondary">
+            <span>📝 Student Registration</span>
+          </a>
+        </div>
+
+        <!-- Metrics Strip -->
+        <div class="metrics-row">
+          <div class="metric-card">
+            <span class="metric-val" id="metric-events-count">5</span>
+            <span class="metric-label">Active Events</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val">650+</span>
+            <span class="metric-label">Student Devs</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val">100%</span>
+            <span class="metric-label">Free & Certified</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val">3D</span>
+            <span class="metric-label">Spatial Engine</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive 3D Holographic Core Stage -->
+      <div class="hero-3d-stage">
+        <div class="stage-frame">
+          <div class="stage-header">
+            <span class="stage-dot"></span>
+            <span class="stage-title">INTERACTIVE 3D SPATIAL CORE</span>
+            <span class="stage-fps" id="stage-fps">60 FPS</span>
+          </div>
+
+          <!-- 3D WebGL / Canvas Viewport -->
+          <div class="canvas-3d-viewport" id="canvas-3d-viewport">
+            <canvas id="hero-3d-canvas"></canvas>
+            <div class="canvas-3d-hint">
+              <span>🖱️ Drag to rotate in 3D • Move mouse for tilt</span>
+            </div>
+          </div>
+
+          <!-- 3D Interactive Control Buttons -->
+          <div class="stage-controls">
+            <button id="btn-3d-pulse" class="btn-micro" type="button" title="Trigger an expanding 3D shockwave ring">
+              <span>⚡ Energy Pulse</span>
+            </button>
+            <button id="btn-3d-wireframe" class="btn-micro" type="button" title="Toggle wireframe / solid crystal mode">
+              <span>🌐 Wireframe</span>
+            </button>
+            <button id="btn-3d-speed" class="btn-micro" type="button" title="Change 3D core rotation speed">
+              <span>🔄 Warp Speed</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <div class="layout-grid">
+
+      <!-- LEFT COLUMN: Upcoming Technical Events Schedule -->
+      <section class="events-section" id="events-section">
+        
+        <div class="section-topbar">
+          <div class="section-title-wrap">
+            <span class="section-kicker">Real-Time Schedule</span>
+            <h2>Upcoming Technical Events</h2>
+          </div>
+          <button id="load-events-btn" class="btn btn-outline" type="button" title="Fetch fresh events from FastAPI /api/events">
+            <span class="btn-icon">🔄</span>
+            <span>Refresh Events</span>
+          </button>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="filter-controls">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="event-search-input" 
+              class="search-input" 
+              placeholder="Search by topic, speaker, or keyword..."
+              autocomplete="off"
+            >
+            <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search" style="display: none;">✕</button>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="category-pills" id="category-pills" role="tablist" aria-label="Filter events by category">
+            <button class="pill active" data-category="all" role="tab" aria-selected="true">All Events</button>
+            <button class="pill" data-category="3D & Web" role="tab" aria-selected="false">🪐 3D & Web</button>
+            <button class="pill" data-category="Artificial Intelligence" role="tab" aria-selected="false">🤖 AI & ML</button>
+            <button class="pill" data-category="Hackathon" role="tab" aria-selected="false">⚡ Hackathons</button>
+            <button class="pill" data-category="Cloud & DevOps" role="tab" aria-selected="false">☁️ Cloud</button>
+            <button class="pill" data-category="Security" role="tab" aria-selected="false">🛡️ Security</button>
+            <button class="pill" data-category="saved" role="tab" aria-selected="false">⭐ Saved (<span id="saved-count">0</span>)</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Events Container -->
+        <div id="events-container" class="events-feed">
+          <div class="empty-state">
+            <div class="empty-icon">📡</div>
+            <h3>FastAPI Events Ready to Load</h3>
+            <p>Click the <strong>"Refresh Events"</strong> button above or click below to pull live event data from our Python backend.</p>
+            <button id="empty-state-load-btn" class="btn btn-primary" type="button">
+              <span>Load Live Schedule</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT COLUMN: Student Registration & 3D Interactive Tech Pass -->
+      <section class="registration-section" id="registration-section">
+        
+        <div class="registration-card">
+          <div class="card-header">
+            <div class="badge-tag">FastAPI Registration</div>
+            <h2>Student Registration</h2>
+            <p class="card-desc">Reserve your spot in upcoming workshops and generate your 3D Digital Holographic Pass.</p>
+          </div>
+
+          <!-- Alert Notification Box -->
+          <div id="alert-box" class="alert" role="alert" style="display: none;"></div>
+
+          <!-- Registration Form -->
+          <form id="registration-form" novalidate>
+            
+            <div class="form-field">
+              <label for="student-name">
+                <span>Student Full Name</span>
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-with-icon">
+                <span class="input-icon">👤</span>
+                <input 
+                  type="text" 
+                  id="student-name" 
+                  name="name" 
+                  class="form-input" 
+                  placeholder="e.g. Maya Lin" 
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="student-email">
+                <span>Student Email Address</span>
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-with-icon">
+                <span class="input-icon">✉️</span>
+                <input 
+                  type="email" 
+                  id="student-email" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="e.g. maya.lin@university.edu" 
+                  required
+                >
+              </div>
+              <span class="field-hint">Your 3D credentials & session link will be sent to this email.</span>
+            </div>
+
+            <div class="form-field">
+              <label for="event-select">
+                <span>Select Workshop / Track</span>
+                <span class="optional-tag">(Optional)</span>
+              </label>
+              <div class="input-with-icon">
+                <span class="input-icon">🎯</span>
+                <select id="event-select" name="event_id" class="form-select">
+                  <option value="">NovaSphere Core Membership</option>
+                  <!-- Populated dynamically when events load -->
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary btn-block btn-glow">
+              <span class="btn-text">Generate 3D Pass</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+
+          <!-- Interactive 3D Flippable Holographic Pass -->
+          <div id="tech-pass-wrapper" class="tech-pass-wrapper" style="display: none;">
+            
+            <!-- 3D Perspective Flip Container -->
+            <div class="card-3d-scene" id="card-3d-scene">
+              <div class="card-3d-object" id="card-3d-object">
+                
+                <!-- FRONT FACE -->
+                <div class="card-3d-face card-3d-front">
+                  <div class="pass-holo-sheen"></div>
+                  
+                  <div class="pass-header">
+                    <div class="pass-logo">🪐 NOVASPHERE 3D PASS</div>
+                    <div class="pass-badge">VERIFIED</div>
+                  </div>
+
+                  <div class="pass-chip-row">
+                    <div class="pass-smart-chip">
+                      <div class="chip-line"></div>
+                      <div class="chip-line"></div>
+                    </div>
+                    <span class="pass-nfc-icon">📶 NFC ACTIVE</span>
+                  </div>
+                  
+                  <div class="pass-body">
+                    <div class="pass-row">
+                      <span class="pass-label">ATTENDEE</span>
+                      <span class="pass-val" id="pass-name">-</span>
+                    </div>
+                    <div class="pass-row">
+                      <span class="pass-label">STUDENT EMAIL</span>
+                      <span class="pass-val" id="pass-email">-</span>
+                    </div>
+                    <div class="pass-row">
+                      <span class="pass-label">SELECTED TRACK</span>
+                      <span class="pass-val highlight" id="pass-event">-</span>
+                    </div>
+                    <div class="pass-row">
+                      <span class="pass-label">NEXUS ID</span>
+                      <span class="pass-val code" id="pass-id">#NOVA-2026-0001</span>
+                    </div>
+                  </div>
+
+                  <div class="pass-footer">
+                    <div class="pass-meta">
+                      <span>Python FastAPI Validated</span>
+                      <strong>Ready for Workshop Access</strong>
+                    </div>
+                    <div class="pass-flip-hint">Click "Flip Pass" ↻</div>
+                  </div>
+                </div>
+
+                <!-- BACK FACE -->
+                <div class="card-3d-face card-3d-back">
+                  <div class="pass-holo-sheen"></div>
+
+                  <div class="pass-header">
+                    <div class="pass-logo">🔐 ACCESS KEY</div>
+                    <div class="pass-badge badge-alt">SECURITY MATRIX</div>
+                  </div>
+
+                  <div class="back-body">
+                    <div class="qr-mock" title="NovaSphere Cryptographic QR Pass">
+                      <svg width="68" height="68" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 3h2v3h-2v-3zm0-5h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 6h2v2h-2v-2zm-2-2h2v2h-2v-2zm4-2h2v2h-2v-2z"/>
+                      </svg>
+                    </div>
+
+                    <div class="back-meta">
+                      <div class="back-label">SHA-256 SIGNATURE</div>
+                      <div class="back-code" id="pass-hash">a94f82c...9b01f</div>
+                    </div>
+
+                    <div class="back-perks">
+                      <div class="perk-item">✓ Unlimited Hands-on Code Access</div>
+                      <div class="perk-item">✓ Live Discord Stage & Mentor Lounge</div>
+                      <div class="perk-item">✓ Certified Completion Credential</div>
+                    </div>
+                  </div>
+
+                  <div class="pass-footer">
+                    <div class="pass-meta">
+                      <span>NovaSphere Ecosystem</span>
+                      <strong>Non-transferable Student Pass</strong>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Pass Control Actions -->
+            <div class="pass-action-row">
+              <button id="flip-pass-btn" class="btn btn-outline" type="button">
+                <span>🔄 Flip 3D Pass</span>
+              </button>
+              <button id="register-another-btn" class="btn btn-secondary" type="button">
+                <span>+ Register Another Student</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Frequently Asked Questions -->
+        <div class="info-card">
+          <h3>💡 NovaSphere FAQ</h3>
+          <details class="faq-item">
+            <summary>Are these workshops and events completely free?</summary>
+            <p>Yes! Every workshop, 3D lab, and hackathon organized under NovaSphere is 100% free for students worldwide.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do I need prior coding or 3D graphics experience?</summary>
+            <p>Not at all. We offer dedicated tracks ranging from foundational web development to cutting-edge AI and spatial computing.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How does the frontend connect to the backend?</summary>
+            <p>The plain JavaScript frontend uses the native <code>fetch()</code> API to call FastAPI endpoints (<code>/api/events</code> and <code>/api/register</code>). CORS is enabled on the backend to allow cross-origin communication.</p>
+          </details>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modern Futuristic Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="footer-brand">
+          <span>🪐</span> NovaSphere
+        </div>
+        <p>A next-generation student tech ecosystem merging spatial 3D web interfaces, artificial intelligence, and open-source innovation.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Learning Tracks</h4>
+        <ul>
+          <li>3D Web Graphics & WebGL</li>
+          <li>Autonomous AI & Machine Learning</li>
+          <li>Cloud & DevOps Pipelines</li>
+          <li>Zero-Trust Cybersecurity</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Full-Stack Architecture</h4>
+        <ul>
+          <li>Frontend: Vanilla HTML5, Modern CSS3, Pure JS</li>
+          <li>Backend: Python 3 with FastAPI & Uvicorn</li>
+          <li>3D Engine: Spatial Gyroscope & CSS Perspective</li>
+          <li>Endpoints: GET /api/events & POST /api/register</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 NovaSphere &bull; Empowering Next-Gen Student Developers Everywhere.</p>
+    </div>
+  </footer>
+
+  <!-- Floating Toast Notifications -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Confetti Canvas for Registration Celebration -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <!-- Application Script -->
+  <script src="script.js"></script>
+</body>
+</html>
