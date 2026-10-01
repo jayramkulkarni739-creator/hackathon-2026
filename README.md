@@ -1,83 +1,34 @@
-# Student Tech Hub 🎓💻
+# NovaSphere 3D Student Tech Nexus
 
-A beginner-friendly full-stack web application designed for students to discover upcoming campus technical events and register online. Built with a lightweight **Python FastAPI** backend and a responsive **HTML, CSS, and Vanilla JavaScript** frontend.
+Hackathon theme: **Personalized AI Experiences**
 
----
+NovaSphere is a student tech events platform with a 3D interface. Students choose their interests and skill level, and the app recommends the best events for them with a match percentage and a short reason.
 
-## 📌 Features
+## Features
+- Personalized event recommendations (POST /api/recommend)
+- Live events list from the FastAPI backend (GET /api/events)
+- Student registration with a 3D holographic pass (POST /api/register)
+- Interactive 3D design, search and category filters
 
-- **Frontend**: Clean, modern responsive interface with interactive 3D elements, real-time search, category filters, and an interactive registration pass.
-- **Backend**: Python FastAPI REST API with endpoints to fetch upcoming events (`GET /api/events`) and register attendees (`POST /api/register`).
-- **CORS Enabled**: Allows seamless cross-origin communication between the frontend and backend.
-- **Simple Architecture**: In-memory storage without requiring external databases or heavy frameworks.
+## How the recommendation works
+Each event has topics and a difficulty level. The backend scores every event by how many topics match the student's interests, adds a bonus when the level matches, and returns the events sorted by match percentage. No database or API key is needed.
 
----
+## How to run
+Backend:
 
-## 📁 Project Structure
+    cd backend
+    pip install -r requirements.txt
+    python -m uvicorn main:app --reload --port 8000
 
-```text
-hackathon-2026/
-├── frontend/
-│   ├── index.html       # Webpage structure & user interface
-│   ├── style.css        # Responsive styling & 3D effects
-│   └── script.js        # Vanilla JS handling API requests & UI logic
-├── backend/
-│   ├── main.py          # FastAPI application & REST endpoints
-│   └── requirements.txt # Python package dependencies
-└── README.md            # Project documentation
-```
+Frontend (in a second terminal):
 
----
+    cd frontend
+    python -m http.server 3000
 
-## 🚀 How to Run the Project
+Then open http://localhost:3000
 
-### 1. Run the Backend (FastAPI)
+## Tech stack
+Python, FastAPI, HTML, CSS, JavaScript
 
-1. Open a terminal and navigate to the `backend` folder:
-   ```bash
-   cd backend
-   ```
-
-2. (Optional) Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   # On Windows:
-   .\venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
-
-3. Install the dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Start the backend server:
-   ```bash
-   uvicorn main:app --reload --port 8000
-   ```
-   * Or simply run: `python main.py`
-
-- **API URL**: `http://127.0.0.1:8000`
-- **Interactive Swagger Docs**: `http://127.0.0.1:8000/docs`
-
----
-
-### 2. Run the Frontend Locally
-
-No build step or Node.js required! Choose any of the following:
-
-- **VS Code Live Server**: Right-click `frontend/index.html` and choose **"Open with Live Server"**.
-- **Python HTTP Server**:
-  ```bash
-  cd frontend
-  python -m http.server 3000
-  ```
-  Then open `http://localhost:3000` in your web browser.
-- **Direct Browser Launch**: Double-click `frontend/index.html` to open it directly in any web browser.
-
----
-
-## 👥 Contributors
-
-- [@jayramkulkarni739-creator](https://github.com/jayramkulkarni739-creator)
+## Note
+Event data and statistics are sample demo data.
