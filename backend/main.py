@@ -1,5 +1,5 @@
 """
-NovaSphere Tech Nexus - FastAPI Backend
+NovaSphere - Personalized AI Experiences Backend
 A beginner-friendly REST API for managing tech events, student registrations,
 and Personalized AI Event Recommendations (Hackathon 2026 Theme).
 
@@ -13,8 +13,8 @@ from typing import List, Optional
 
 # 1. Initialize FastAPI application
 app = FastAPI(
-    title="NovaSphere Tech Nexus API",
-    description="Backend API for NovaSphere 3D Tech Nexus & Personalized AI Experiences",
+    title="NovaSphere Personalized AI Experiences API",
+    description="Backend API for NovaSphere Personalized AI Experiences Platform",
     version="1.1.0"
 )
 
@@ -147,7 +147,7 @@ SAMPLE_EVENTS = [
 def read_root():
     """Welcome root endpoint to verify API health."""
     return {
-        "message": "Welcome to NovaSphere Tech Nexus API!",
+        "message": "Welcome to NovaSphere Personalized AI Experiences API!",
         "status": "online",
         "version": "1.1.0",
         "hackathon_theme": "Personalized AI Experiences",

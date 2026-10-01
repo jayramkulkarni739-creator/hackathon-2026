@@ -1,8 +1,8 @@
-# NovaSphere 3D Student Tech Nexus
+# NovaSphere — Personalized AI Experiences
 
 Hackathon theme: **Personalized AI Experiences**
 
-NovaSphere is a student tech events platform with a 3D interface. Students choose their interests and skill level, and the app recommends the best events for them with a match percentage and a short reason.
+NovaSphere is a Personalized AI Experiences platform with an interactive 3D interface. Students choose their interests and skill level, and the app recommends the best events for them with a match percentage and a short reason.
 
 ## Features
 - Personalized event recommendations (POST /api/recommend)
