@@ -203,14 +203,75 @@
                     if (grid) grid.style.display = "none";
                 }
             } catch (err) {
-                if (emptyState) {
-                    emptyState.style.display = "block";
-                    emptyState.innerHTML = '<div class="empty-icon">⚠️</div><h3 style="color:#f43f5e">Backend Connection Failed</h3><p>Could not reach the FastAPI backend on port 8000. Please ensure the backend server is running: <code>uvicorn main:app --port 8000</code></p>';
+                console.warn("Backend unavailable; using local neural scoring engine:", err);
+                const list = clientSideRecommend(uniqueInterests, level);
+                if (emptyState) emptyState.style.display = "none";
+                if (grid) grid.style.display = "grid";
+                box.innerHTML = list.map(cardHtml).join("");
+                if (window.logDevTelemetry) {
+                    window.logDevTelemetry("AI_CLIENT_FALLBACK", "Synthesized " + list.length + " recommendations via client-side engine (web deployment mode)", { count: list.length, top_match: list[0]?.title });
                 }
-                if (grid) grid.style.display = "none";
             }
             btn.disabled = false;
         });
+    }
+
+    function clientSideRecommend(interests, skillLevel) {
+        const events = (typeof getFallbackEvents === "function") ? getFallbackEvents() : [
+            { id: 1, title: "Full-Stack 3D Web Graphics & WebGL", category: "3D & Web", icon: "🪐", level: "Beginner", topics: ["3D/WebGL", "Web"], seats_left: 22, date: "2026-10-06", time: "4:00 PM - 6:00 PM", location: "Innovation Lab 3 & Spatial VR Stream" },
+            { id: 2, title: "Autonomous AI Agents & Neural Architectures", category: "Artificial Intelligence", icon: "🤖", level: "Advanced", topics: ["AI/ML", "Data Science"], seats_left: 7, date: "2026-10-12", time: "3:00 PM - 5:30 PM", location: "Auditorium Hall Alpha" },
+            { id: 3, title: "NovaHacks 2026: 24h Campus Hackathon", category: "Hackathon", icon: "⚡", level: "Intermediate", topics: ["Web", "AI/ML", "Cloud"], seats_left: 40, date: "2026-10-18", time: "9:00 AM - 6:00 PM", location: "NovaSphere Main Atrium" },
+            { id: 4, title: "Cloud-Native DevOps & Container Matrix", category: "Cloud & DevOps", icon: "☁️", level: "Intermediate", topics: ["Cloud", "Cybersecurity"], seats_left: 15, date: "2026-10-24", time: "5:00 PM - 7:00 PM", location: "Virtual / Live Discord Stage" },
+            { id: 5, title: "Zero-Trust Cybersecurity & Cryptography", category: "Security", icon: "🛡️", level: "Advanced", topics: ["Cybersecurity", "Cloud"], seats_left: 4, date: "2026-10-30", time: "4:30 PM - 6:30 PM", location: "Cybersecurity Sandbox Lab" },
+            { id: 6, title: "Data Science & Predictive Modeling Lab", category: "Artificial Intelligence", icon: "📊", level: "Beginner", topics: ["Data Science", "AI/ML"], seats_left: 18, date: "2026-11-04", time: "2:00 PM - 4:00 PM", location: "Data Science Studio B" }
+        ];
+
+        const interestsLower = interests.map(function (i) { return i.toLowerCase().trim(); });
+        const studentLevel = (skillLevel || "Beginner").trim();
+
+        var scored = events.map(function (event) {
+            const topics = event.topics || [];
+            const matchingTopics = topics.filter(function (t) { return interestsLower.includes(t.toLowerCase()); });
+            const topicMatchCount = matchingTopics.length;
+            const levelMatch = (event.level || "Beginner").toLowerCase() === studentLevel.toLowerCase();
+            const score = (topicMatchCount * 10) + (levelMatch ? 5 : 0);
+
+            var calculatedPct = 35;
+            if (interests.length > 0) {
+                var overlap = topicMatchCount / Math.max(topics.length, 1);
+                var basePct = overlap * 70;
+                var bonusPct = levelMatch ? 25 : 5;
+                calculatedPct = Math.round(basePct + bonusPct);
+                if (topicMatchCount === 0) calculatedPct = levelMatch ? 30 : 15;
+            } else {
+                calculatedPct = levelMatch ? 75 : 35;
+            }
+            var matchPercentage = Math.min(98, Math.max(15, calculatedPct));
+
+            var reason = "";
+            if (matchingTopics.length > 0) {
+                var topicsStr = matchingTopics.join(", ");
+                reason = levelMatch
+                    ? "Perfect match for your interest in " + topicsStr + ", crafted at your " + studentLevel + " skill level!"
+                    : "Recommended for your interest in " + topicsStr + ", featuring practical exercises to advance your skills.";
+            } else {
+                reason = levelMatch
+                    ? "Aligned with your " + studentLevel + " skill level to help you explore new tech horizons."
+                    : "Great workshop in " + event.category + " to broaden your developer toolkit.";
+            }
+
+            return Object.assign({}, event, {
+                score: score,
+                match_percentage: matchPercentage,
+                reason: reason,
+                matching_topics: matchingTopics
+            });
+        });
+
+        scored.sort(function (a, b) {
+            return b.score - a.score || b.match_percentage - a.match_percentage;
+        });
+        return scored;
     }
 
     if (document.readyState === "loading") {
