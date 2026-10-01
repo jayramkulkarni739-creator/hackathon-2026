@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NovaSphere | 3D Student Tech Nexus & Workshop Platform</title>
-  <meta name="description" content="NovaSphere is an interactive 3D student tech nexus featuring hands-on workshops, autonomous AI labs, hackathons, and real-time FastAPI integration.">
-  
+  <meta name="description"
+    content="NovaSphere is an interactive 3D student tech nexus featuring hands-on workshops, autonomous AI labs, hackathons, and real-time FastAPI integration.">
+
   <!-- Futuristic Google Fonts: Orbitron (Headings) + Space Grotesk (Body) + JetBrains Mono (Code/IDs) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <!-- Three.js (Optional CDN for accelerated 3D WebGL; fallback native 3D engine included) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <!-- 3D Spatial Particle Canvas Background -->
@@ -47,12 +52,14 @@
         </div>
 
         <!-- Audio FX Toggle -->
-        <button id="sound-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle audio effects" title="Toggle Futuristic Audio FX">
+        <button id="sound-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle audio effects"
+          title="Toggle Futuristic Audio FX">
           <span class="nav-control-icon" id="sound-icon">🔊</span>
         </button>
 
         <!-- Dark / Light Theme Toggle -->
-        <button id="theme-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle visual theme" title="Toggle Dark/Light Mode">
+        <button id="theme-toggle-btn" class="nav-control-btn" type="button" aria-label="Toggle visual theme"
+          title="Toggle Dark/Light Mode">
           <span class="nav-control-icon" id="theme-icon">☀️</span>
         </button>
       </div>
@@ -62,20 +69,21 @@
   <!-- Hero Section with Interactive 3D Spatial Core -->
   <header class="hero-section">
     <div class="hero-container">
-      
+
       <!-- Left Column: Hero Information -->
       <div class="hero-content">
         <div class="hero-badge">
           <span class="badge-sparkle">🚀</span> 2026 Campus Innovation Matrix
         </div>
-        
+
         <h1 class="hero-title">
           NovaSphere<br>
           <span class="gradient-text">3D Student Tech Nexus</span>
         </h1>
-        
+
         <p class="hero-subtitle">
-          An autonomous launchpad for student engineers. Explore spatial web graphics, artificial intelligence agents, cloud infrastructure, and live hackathons — powered by Python FastAPI.
+          An autonomous launchpad for student engineers. Explore spatial web graphics, artificial intelligence agents,
+          cloud infrastructure, and live hackathons — powered by Python FastAPI.
         </p>
 
         <!-- Interactive Next Event Countdown Widget -->
@@ -101,6 +109,9 @@
           <button id="hero-load-btn" class="btn btn-primary btn-glow" type="button">
             <span>⚡ Load Live Events</span>
           </button>
+          <a href="#personalize-section" class="btn btn-accent btn-glow">
+            <span>✨ AI Recommendations</span>
+          </a>
           <a href="#registration-section" class="btn btn-secondary">
             <span>📝 Student Registration</span>
           </a>
@@ -163,18 +174,139 @@
   </header>
 
   <!-- Main Container -->
-  <main class="main-container">
+  b <main class="main-container">
+
+    <!-- ================================================================= -->
+    <!-- PERSONALIZED AI EXPERIENCES SECTION (Hackathon 2026 Theme)        -->
+    <!-- ================================================================= -->
+    <section class="personalize-section" id="personalize-section" aria-label="Personalized AI Event Recommendations">
+      <div class="personalize-card">
+
+        <div class="personalize-header">
+          <div class="personalize-badge">
+            <span class="badge-sparkle">✨</span> Hackathon 2026 Theme: Personalized AI Experiences
+          </div>
+          <h2 class="personalize-title">Personalize My Events</h2>
+          <p class="personalize-desc">
+            Select your technical interests and skill level below. Our AI recommendation engine will analyze workshop
+            tracks, calculate your match score, and present tailored events suited specifically to you.
+          </p>
+        </div>
+
+        <div class="personalize-controls">
+          <!-- Interest Checkboxes -->
+          <div class="control-group">
+            <label class="control-label">
+              <span class="control-icon">🎯</span>
+              <span>Select Your Technical Interests:</span>
+            </label>
+            <div class="interest-checkboxes-grid" id="interest-checkboxes">
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="AI/ML" checked>
+                <span class="chip-box">
+                  <span class="chip-icon">🤖</span>
+                  <span class="chip-name">AI/ML</span>
+                </span>
+              </label>
+
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="Web" checked>
+                <span class="chip-box">
+                  <span class="chip-icon">🌐</span>
+                  <span class="chip-name">Web</span>
+                </span>
+              </label>
+
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="Cloud">
+                <span class="chip-box">
+                  <span class="chip-icon">☁️</span>
+                  <span class="chip-name">Cloud</span>
+                </span>
+              </label>
+
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="Cybersecurity">
+                <span class="chip-box">
+                  <span class="chip-icon">🛡️</span>
+                  <span class="chip-name">Cybersecurity</span>
+                </span>
+              </label>
+
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="3D/WebGL">
+                <span class="chip-box">
+                  <span class="chip-icon">🪐</span>
+                  <span class="chip-name">3D/WebGL</span>
+                </span>
+              </label>
+
+              <label class="interest-chip">
+                <input type="checkbox" name="user-interest" value="Data Science">
+                <span class="chip-box">
+                  <span class="chip-icon">📊</span>
+                  <span class="chip-name">Data Science</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Skill Level Dropdown & Recommend Button -->
+          <div class="personalize-bottom-bar">
+            <div class="control-group skill-selector-group">
+              <label class="control-label" for="skill-level-select">
+                <span class="control-icon">📈</span>
+                <span>Experience / Skill Level:</span>
+              </label>
+              <div class="input-with-icon">
+                <span class="input-icon">🎓</span>
+                <select id="skill-level-select" class="form-select">
+                  <option value="Beginner" selected>🟢 Beginner (Foundations & Hands-on)</option>
+                  <option value="Intermediate">🟡 Intermediate (Practical Building)</option>
+                  <option value="Advanced">🔴 Advanced (Architecture & Systems)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="personalize-action-group">
+              <button id="recommend-btn" class="btn btn-primary btn-glow btn-recommend" type="button">
+                <span class="btn-icon">✨</span>
+                <span>Recommend for me</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendations Output Container -->
+        <div class="recommendations-container" id="recommendations-container">
+          <!-- Empty / Initial Placeholder State -->
+          <div class="rec-empty-state" id="rec-empty-state">
+            <div class="empty-icon">🔮</div>
+            <h3>Personalized Recommendations Ready</h3>
+            <p>Select your interests and experience level above, then click <strong>"Recommend for me"</strong> to
+              generate your tailored workshop lineup.</p>
+          </div>
+
+          <!-- Dynamic Recommendations Feed -->
+          <div class="recommendations-grid" id="recommendations-grid" style="display: none;">
+            <!-- Recommended cards rendered here by script.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
     <div class="layout-grid">
 
       <!-- LEFT COLUMN: Upcoming Technical Events Schedule -->
       <section class="events-section" id="events-section">
-        
+
         <div class="section-topbar">
           <div class="section-title-wrap">
             <span class="section-kicker">Real-Time Schedule</span>
             <h2>Upcoming Technical Events</h2>
           </div>
-          <button id="load-events-btn" class="btn btn-outline" type="button" title="Fetch fresh events from FastAPI /api/events">
+          <button id="load-events-btn" class="btn btn-outline" type="button"
+            title="Fetch fresh events from FastAPI /api/events">
             <span class="btn-icon">🔄</span>
             <span>Refresh Events</span>
           </button>
@@ -184,25 +316,23 @@
         <div class="filter-controls">
           <div class="search-input-wrap">
             <span class="search-icon">🔍</span>
-            <input 
-              type="text" 
-              id="event-search-input" 
-              class="search-input" 
-              placeholder="Search by topic, speaker, or keyword..."
-              autocomplete="off"
-            >
-            <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search" style="display: none;">✕</button>
+            <input type="text" id="event-search-input" class="search-input"
+              placeholder="Search by topic, speaker, or keyword..." autocomplete="off">
+            <button id="search-clear-btn" class="search-clear-btn" type="button" aria-label="Clear search"
+              style="display: none;">✕</button>
           </div>
 
           <!-- Category Filter Pills -->
           <div class="category-pills" id="category-pills" role="tablist" aria-label="Filter events by category">
             <button class="pill active" data-category="all" role="tab" aria-selected="true">All Events</button>
             <button class="pill" data-category="3D & Web" role="tab" aria-selected="false">🪐 3D & Web</button>
-            <button class="pill" data-category="Artificial Intelligence" role="tab" aria-selected="false">🤖 AI & ML</button>
+            <button class="pill" data-category="Artificial Intelligence" role="tab" aria-selected="false">🤖 AI &
+              ML</button>
             <button class="pill" data-category="Hackathon" role="tab" aria-selected="false">⚡ Hackathons</button>
             <button class="pill" data-category="Cloud & DevOps" role="tab" aria-selected="false">☁️ Cloud</button>
             <button class="pill" data-category="Security" role="tab" aria-selected="false">🛡️ Security</button>
-            <button class="pill" data-category="saved" role="tab" aria-selected="false">⭐ Saved (<span id="saved-count">0</span>)</button>
+            <button class="pill" data-category="saved" role="tab" aria-selected="false">⭐ Saved (<span
+                id="saved-count">0</span>)</button>
           </div>
         </div>
 
@@ -211,7 +341,8 @@
           <div class="empty-state">
             <div class="empty-icon">📡</div>
             <h3>FastAPI Events Ready to Load</h3>
-            <p>Click the <strong>"Refresh Events"</strong> button above or click below to pull live event data from our Python backend.</p>
+            <p>Click the <strong>"Refresh Events"</strong> button above or click below to pull live event data from our
+              Python backend.</p>
             <button id="empty-state-load-btn" class="btn btn-primary" type="button">
               <span>Load Live Schedule</span>
             </button>
@@ -222,12 +353,13 @@
 
       <!-- RIGHT COLUMN: Student Registration & 3D Interactive Tech Pass -->
       <section class="registration-section" id="registration-section">
-        
+
         <div class="registration-card">
           <div class="card-header">
             <div class="badge-tag">FastAPI Registration</div>
             <h2>Student Registration</h2>
-            <p class="card-desc">Reserve your spot in upcoming workshops and generate your 3D Digital Holographic Pass.</p>
+            <p class="card-desc">Reserve your spot in upcoming workshops and generate your 3D Digital Holographic Pass.
+            </p>
           </div>
 
           <!-- Alert Notification Box -->
@@ -235,7 +367,7 @@
 
           <!-- Registration Form -->
           <form id="registration-form" novalidate>
-            
+
             <div class="form-field">
               <label for="student-name">
                 <span>Student Full Name</span>
@@ -243,14 +375,8 @@
               </label>
               <div class="input-with-icon">
                 <span class="input-icon">👤</span>
-                <input 
-                  type="text" 
-                  id="student-name" 
-                  name="name" 
-                  class="form-input" 
-                  placeholder="e.g. Maya Lin" 
-                  required
-                >
+                <input type="text" id="student-name" name="name" class="form-input" placeholder="e.g. Maya Lin"
+                  required>
               </div>
             </div>
 
@@ -261,14 +387,8 @@
               </label>
               <div class="input-with-icon">
                 <span class="input-icon">✉️</span>
-                <input 
-                  type="email" 
-                  id="student-email" 
-                  name="email" 
-                  class="form-input" 
-                  placeholder="e.g. maya.lin@university.edu" 
-                  required
-                >
+                <input type="email" id="student-email" name="email" class="form-input"
+                  placeholder="e.g. maya.lin@university.edu" required>
               </div>
               <span class="field-hint">Your 3D credentials & session link will be sent to this email.</span>
             </div>
@@ -295,15 +415,15 @@
 
           <!-- Interactive 3D Flippable Holographic Pass -->
           <div id="tech-pass-wrapper" class="tech-pass-wrapper" style="display: none;">
-            
+
             <!-- 3D Perspective Flip Container -->
             <div class="card-3d-scene" id="card-3d-scene">
               <div class="card-3d-object" id="card-3d-object">
-                
+
                 <!-- FRONT FACE -->
                 <div class="card-3d-face card-3d-front">
                   <div class="pass-holo-sheen"></div>
-                  
+
                   <div class="pass-header">
                     <div class="pass-logo">🪐 NOVASPHERE 3D PASS</div>
                     <div class="pass-badge">VERIFIED</div>
@@ -316,7 +436,7 @@
                     </div>
                     <span class="pass-nfc-icon">📶 NFC ACTIVE</span>
                   </div>
-                  
+
                   <div class="pass-body">
                     <div class="pass-row">
                       <span class="pass-label">ATTENDEE</span>
@@ -357,7 +477,8 @@
                   <div class="back-body">
                     <div class="qr-mock" title="NovaSphere Cryptographic QR Pass">
                       <svg width="68" height="68" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 3h2v3h-2v-3zm0-5h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 6h2v2h-2v-2zm-2-2h2v2h-2v-2zm4-2h2v2h-2v-2z"/>
+                        <path
+                          d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 3h2v3h-2v-3zm0-5h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 6h2v2h-2v-2zm-2-2h2v2h-2v-2zm4-2h2v2h-2v-2z" />
                       </svg>
                     </div>
 
@@ -403,15 +524,19 @@
           <h3>💡 NovaSphere FAQ</h3>
           <details class="faq-item">
             <summary>Are these workshops and events completely free?</summary>
-            <p>Yes! Every workshop, 3D lab, and hackathon organized under NovaSphere is 100% free for students worldwide.</p>
+            <p>Yes! Every workshop, 3D lab, and hackathon organized under NovaSphere is 100% free for students
+              worldwide.</p>
           </details>
           <details class="faq-item">
             <summary>Do I need prior coding or 3D graphics experience?</summary>
-            <p>Not at all. We offer dedicated tracks ranging from foundational web development to cutting-edge AI and spatial computing.</p>
+            <p>Not at all. We offer dedicated tracks ranging from foundational web development to cutting-edge AI and
+              spatial computing.</p>
           </details>
           <details class="faq-item">
             <summary>How does the frontend connect to the backend?</summary>
-            <p>The plain JavaScript frontend uses the native <code>fetch()</code> API to call FastAPI endpoints (<code>/api/events</code> and <code>/api/register</code>). CORS is enabled on the backend to allow cross-origin communication.</p>
+            <p>The plain JavaScript frontend uses the native <code>fetch()</code> API to call FastAPI endpoints
+              (<code>/api/events</code> and <code>/api/register</code>). CORS is enabled on the backend to allow
+              cross-origin communication.</p>
           </details>
         </div>
 
@@ -427,7 +552,8 @@
         <div class="footer-brand">
           <span>🪐</span> NovaSphere
         </div>
-        <p>A next-generation student tech ecosystem merging spatial 3D web interfaces, artificial intelligence, and open-source innovation.</p>
+        <p>A next-generation student tech ecosystem merging spatial 3D web interfaces, artificial intelligence, and
+          open-source innovation.</p>
       </div>
 
       <div class="footer-col">
@@ -464,5 +590,7 @@
 
   <!-- Application Script -->
   <script src="script.js"></script>
+  <script src="recommend.js"></script>
 </body>
+
 </html>
