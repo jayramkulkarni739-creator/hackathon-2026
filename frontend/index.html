@@ -66,6 +66,21 @@
     </div>
   </nav>
 
+  <!-- Futuristic HUD Telemetry Bar -->
+  <div class="hud-telemetry-strip" aria-label="System Telemetry">
+    <div class="hud-telemetry-inner">
+      <span class="hud-item"><span class="hud-dot"></span> MATRIX_HUD // v3.2</span>
+      <span class="hud-sep">//</span>
+      <span class="hud-item">SYS_LATENCY: <strong id="hud-latency">6ms</strong></span>
+      <span class="hud-sep">//</span>
+      <span class="hud-item">CORE: <strong id="hud-core-status">SPATIAL 3D ACTIVE</strong></span>
+      <span class="hud-sep">//</span>
+      <span class="hud-item">FPS: <strong id="hud-fps-val">60 FPS</strong></span>
+      <span class="hud-sep">//</span>
+      <span class="hud-item">MODE: <span class="hud-guild-tag">TACTILE CYBER-DECK</span></span>
+    </div>
+  </div>
+
   <!-- Hero Section with Interactive 3D Spatial Core -->
   <header class="hero-section">
     <div class="hero-container">
@@ -162,6 +177,12 @@
             </button>
             <button id="btn-3d-wireframe" class="btn-micro" type="button" title="Toggle wireframe / solid crystal mode">
               <span>🌐 Wireframe</span>
+            </button>
+            <button id="btn-3d-color" class="btn-micro" type="button" title="Cycle Core Hologram Color Matrix">
+              <span>🎨 Color Matrix</span>
+            </button>
+            <button id="btn-3d-explode" class="btn-micro" type="button" title="Trigger Particle Nova Shockwave">
+              <span>💥 Nova Burst</span>
             </button>
             <button id="btn-3d-speed" class="btn-micro" type="button" title="Change 3D core rotation speed">
               <span>🔄 Warp Speed</span>
@@ -543,6 +564,37 @@
       </section>
 
     </div>
+
+    <!-- ================================================================= -->
+    <!-- LIVE FASTAPI TELEMETRY & TRANSACTION INSPECTOR                    -->
+    <!-- ================================================================= -->
+    <section class="telemetry-terminal-section" id="dev-terminal-section">
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="t-dot red"></span>
+            <span class="t-dot yellow"></span>
+            <span class="t-dot green"></span>
+          </div>
+          <div class="terminal-title">
+            <span>⚡ FASTAPI LIVE TELEMETRY &amp; TRANSACTION INSPECTOR</span>
+            <span class="terminal-pill">REAL-TIME REST LOG</span>
+          </div>
+          <div class="terminal-actions">
+            <button id="clear-terminal-btn" class="btn-terminal-action" type="button">Clear Console</button>
+          </div>
+        </div>
+        <div class="terminal-subbar">
+          <span>HOST: <code>http://127.0.0.1:8000</code></span>
+          <span>PROTOCOL: <code>HTTP/1.1 CORS-ACTIVE</code></span>
+          <span>DEV GUILD: <code>HANDCRAFTED VANILLA JS + FASTAPI</code></span>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <div class="t-line t-system"><span class="t-time">[00:00:00]</span> <span class="t-tag">[INIT]</span> NovaSphere Quantum HUD initialized. Listening for user interactions &amp; FastAPI transactions...</div>
+          <div class="t-line t-info"><span class="t-time">[00:00:01]</span> <span class="t-tag">[SYS]</span> 3D Spatial Gyroscope Core engaged with WebGL &amp; Canvas fallback.</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Futuristic Footer -->

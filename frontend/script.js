@@ -17,8 +17,15 @@
 let activeApiHost = window.location.hostname === "localhost" ? "http://localhost:8000" : "http://127.0.0.1:8000";
 
 async function apiFetch(endpoint, options = {}) {
+  const t0 = performance.now();
   try {
     const res = await fetch(`${activeApiHost}${endpoint}`, options);
+    const duration = Math.round(performance.now() - t0);
+    const hudLat = document.getElementById("hud-latency");
+    if (hudLat) hudLat.textContent = `${duration}ms`;
+    if (window.logDevTelemetry) {
+      window.logDevTelemetry("REST_200", `${options.method || "GET"} ${endpoint} (${duration}ms)`);
+    }
     return res;
   } catch (err) {
     // If request fails, automatically attempt the alternate host
@@ -27,9 +34,18 @@ async function apiFetch(endpoint, options = {}) {
       : "http://localhost:8000";
     try {
       const altRes = await fetch(`${alternateHost}${endpoint}`, options);
+      const duration = Math.round(performance.now() - t0);
+      const hudLat = document.getElementById("hud-latency");
+      if (hudLat) hudLat.textContent = `${duration}ms`;
+      if (window.logDevTelemetry) {
+        window.logDevTelemetry("REST_FALLBACK", `${options.method || "GET"} ${endpoint} via ${alternateHost} (${duration}ms)`);
+      }
       activeApiHost = alternateHost; // Switch to the responsive host
       return altRes;
     } catch {
+      if (window.logDevTelemetry) {
+        window.logDevTelemetry("REST_ERR", `Failed ${options.method || "GET"} ${endpoint}`);
+      }
       throw err;
     }
   }
@@ -168,7 +184,9 @@ async function checkBackendHealth() {
 let core3DControls = {
   wireframe: true,
   speedMultiplier: 1.0,
-  pulseTrigger: null
+  pulseTrigger: null,
+  changeColor: null,
+  novaBurst: null
 };
 
 function initHero3DStage() {
@@ -187,12 +205,15 @@ function initHero3DStage() {
   const pulseBtn = document.getElementById("btn-3d-pulse");
   const wireframeBtn = document.getElementById("btn-3d-wireframe");
   const speedBtn = document.getElementById("btn-3d-speed");
+  const colorBtn = document.getElementById("btn-3d-color");
+  const explodeBtn = document.getElementById("btn-3d-explode");
 
   if (pulseBtn) {
     pulseBtn.addEventListener("click", () => {
       playTechTone("pulse");
       if (core3DControls.pulseTrigger) core3DControls.pulseTrigger();
       showToast("3D Energy Pulse wave emitted!", "info");
+      window.logDevTelemetry?.("3D_PULSE", "Shockwave pulse triggered through spatial core");
     });
   }
 
@@ -203,6 +224,29 @@ function initHero3DStage() {
         ? "<span>🌐 Wireframe</span>"
         : "<span>💎 Solid Crystal</span>";
       playTechTone("click");
+      window.logDevTelemetry?.("3D_MODE", `Geometry mode set to: ${core3DControls.wireframe ? "Wireframe" : "Solid"}`);
+    });
+  }
+
+  if (colorBtn) {
+    colorBtn.addEventListener("click", () => {
+      playTechTone("click");
+      if (core3DControls.changeColor) {
+        const themeName = core3DControls.changeColor();
+        showToast(`3D Core Matrix shifted to: ${themeName}`, "info");
+        window.logDevTelemetry?.("3D_CORE", `Color Matrix shifted to: ${themeName}`);
+      }
+    });
+  }
+
+  if (explodeBtn) {
+    explodeBtn.addEventListener("click", () => {
+      playTechTone("pulse");
+      if (core3DControls.novaBurst) {
+        core3DControls.novaBurst();
+        showToast("Particle Nova Burst triggered!", "success");
+        window.logDevTelemetry?.("3D_CORE", "Particle Nova Burst wave emitted");
+      }
     });
   }
 
@@ -219,6 +263,7 @@ function initHero3DStage() {
         speedBtn.innerHTML = "<span>🔄 Normal Speed</span>";
       }
       playTechTone("click");
+      window.logDevTelemetry?.("3D_CORE", `Warp multiplier: ${core3DControls.speedMultiplier}x`);
     });
   }
 }
@@ -310,6 +355,58 @@ function initThreeJsCore(canvas, container) {
     pulseRing.scale.set(1, 1, 1);
   };
 
+  // 7. Ambient Floating Quantum Particles
+  const dustGeo = new THREE.BufferGeometry();
+  const dustCount = 90;
+  const dustPositions = new Float32Array(dustCount * 3);
+  for (let i = 0; i < dustCount * 3; i += 3) {
+    dustPositions[i] = (Math.random() - 0.5) * 8;
+    dustPositions[i + 1] = (Math.random() - 0.5) * 8;
+    dustPositions[i + 2] = (Math.random() - 0.5) * 8;
+  }
+  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+  const dustMat = new THREE.PointsMaterial({
+    color: 0x00f0ff,
+    size: 0.06,
+    transparent: true,
+    opacity: 0.75
+  });
+  const dustPoints = new THREE.Points(dustGeo, dustMat);
+  scene.add(dustPoints);
+
+  // 8. 4-Theme Futuristic Color Matrix Palettes
+  const PALETTES = [
+    { name: "Cyber Cyan", primary: 0x00f0ff, secondary: 0xa855f7, sat: 0x39ff14, ring: 0x00f0ff },
+    { name: "Hyper Violet", primary: 0xd946ef, secondary: 0x00f0ff, sat: 0xf59e0b, ring: 0xd946ef },
+    { name: "Matrix Emerald", primary: 0x00ff88, secondary: 0x00e5ff, sat: 0xa855f7, ring: 0x00ff88 },
+    { name: "Solar Amber", primary: 0xffaa00, secondary: 0xff0055, sat: 0x00f0ff, ring: 0xffaa00 }
+  ];
+
+  let currentPaletteIdx = 0;
+  core3DControls.changeColor = () => {
+    currentPaletteIdx = (currentPaletteIdx + 1) % PALETTES.length;
+    const p = PALETTES[currentPaletteIdx];
+    icoMat.color.setHex(p.primary);
+    innerMat.color.setHex(p.secondary);
+    ringMat1.color.setHex(p.ring);
+    ringMat2.color.setHex(p.secondary);
+    satMat.color.setHex(p.sat);
+    pulseRingMat.color.setHex(p.primary);
+    dustMat.color.setHex(p.primary);
+    return p.name;
+  };
+
+  // 9. Particle Nova Shockwave
+  core3DControls.novaBurst = () => {
+    core3DControls.pulseTrigger();
+    satellites.forEach((s) => {
+      s.radius = 4.2;
+    });
+    setTimeout(() => {
+      satellites.forEach((s) => { s.radius = 2.0; });
+    }, 1100);
+  };
+
   // Interactive Mouse Parallax & Drag
   let targetRotX = 0;
   let targetRotY = 0;
@@ -353,8 +450,11 @@ function initThreeJsCore(canvas, container) {
     renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
-  // Animation Loop
+  // Animation Loop & Live Telemetry
   let clock = 0;
+  let frameCount = 0;
+  let lastFpsCheck = performance.now();
+
   function animate() {
     requestAnimationFrame(animate);
     clock += 0.015 * core3DControls.speedMultiplier;
@@ -376,6 +476,9 @@ function initThreeJsCore(canvas, container) {
     ring1.rotation.z += 0.01 * core3DControls.speedMultiplier;
     ring2.rotation.x -= 0.008 * core3DControls.speedMultiplier;
 
+    dustPoints.rotation.y += 0.001 * core3DControls.speedMultiplier;
+    dustPoints.rotation.x -= 0.0006 * core3DControls.speedMultiplier;
+
     // Update satellites in 3D orbit
     satellites.forEach((sat) => {
       sat.angle += sat.speed * core3DControls.speedMultiplier;
@@ -393,6 +496,19 @@ function initThreeJsCore(canvas, container) {
       if (pulseOpacity <= 0) {
         pulseActive = false;
       }
+    }
+
+    // Live FPS Telemetry
+    frameCount++;
+    const now = performance.now();
+    if (now - lastFpsCheck >= 1000) {
+      const fps = Math.round((frameCount * 1000) / (now - lastFpsCheck));
+      const fpsEl = document.getElementById("stage-fps");
+      if (fpsEl) fpsEl.textContent = `${fps} FPS`;
+      const hudFpsEl = document.getElementById("hud-fps-val");
+      if (hudFpsEl) hudFpsEl.textContent = `${fps} FPS`;
+      frameCount = 0;
+      lastFpsCheck = now;
     }
 
     renderer.render(scene, camera);
@@ -1293,7 +1409,31 @@ function escapeHtml(str) {
 }
 
 // ==========================================================================
-// 15. Initialization on DOM Ready
+// 15. Live Telemetry Logger & Terminal Inspector
+// ==========================================================================
+window.logDevTelemetry = function(tag, msg, payload = null) {
+  const terminal = document.getElementById("terminal-body");
+  if (!terminal) return;
+  const time = new Date().toTimeString().split(" ")[0];
+  const line = document.createElement("div");
+  line.className = "t-line";
+  if (tag.includes("200") || tag.includes("SUCCESS")) line.classList.add("t-success");
+  else if (tag.includes("WARN")) line.classList.add("t-warn");
+  else if (tag.includes("ERR") || tag.includes("FAIL")) line.classList.add("t-error");
+
+  let payloadStr = "";
+  if (payload) {
+    try {
+      payloadStr = ` <span style="opacity:0.75">${JSON.stringify(payload).slice(0, 140)}</span>`;
+    } catch (_) {}
+  }
+  line.innerHTML = `<span class="t-time">[${time}]</span> <span class="t-tag">[${tag}]</span> <span>${escapeHtml(msg)}</span>${payloadStr}`;
+  terminal.appendChild(line);
+  terminal.scrollTop = terminal.scrollHeight;
+};
+
+// ==========================================================================
+// 16. Initialization on DOM Ready
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
@@ -1303,6 +1443,16 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchEvents();
   initHero3DStage();
   initParticleCanvas();
+
+  const clearBtn = document.getElementById("clear-terminal-btn");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      const term = document.getElementById("terminal-body");
+      if (term) {
+        term.innerHTML = '<div class="t-line t-system"><span class="t-time">[' + new Date().toTimeString().split(" ")[0] + ']</span> <span class="t-tag">[CLEARED]</span> Live telemetry console reset by user.</div>';
+      }
+    });
+  }
 
   if (loadEventsBtn) {
     loadEventsBtn.addEventListener("click", () => fetchEvents(true));
@@ -1320,3 +1470,4 @@ document.addEventListener("DOMContentLoaded", () => {
     emptyStateLoadBtn.addEventListener("click", () => fetchEvents(true));
   }
 });
+

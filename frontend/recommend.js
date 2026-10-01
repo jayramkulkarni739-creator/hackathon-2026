@@ -192,6 +192,9 @@
                     if (emptyState) emptyState.style.display = "none";
                     if (grid) grid.style.display = "grid";
                     box.innerHTML = list.map(cardHtml).join("");
+                    if (window.logDevTelemetry) {
+                        window.logDevTelemetry("AI_ENGINE", "Synthesized " + list.length + " recommendations for [" + uniqueInterests.join(", ") + "] (" + level + ")", { count: list.length, top_match: list[0]?.title });
+                    }
                 } else {
                     if (emptyState) {
                         emptyState.style.display = "block";
