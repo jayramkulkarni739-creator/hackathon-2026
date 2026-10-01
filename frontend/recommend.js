@@ -1,4 +1,4 @@
-// recommend.js - connects the "Recommend for me" button to POST /api/recommend
+// recommend.js - connects the "Recommend for me" button to POST /api/recommend with modern cyberpunk 3D aesthetics
 (function () {
     const HOSTS = ["http://127.0.0.1:8000", "http://localhost:8000"];
 
@@ -40,28 +40,87 @@
         let match = findValue(r, ["match", "percent"], "number");
         if (match === null) match = findValue(r, ["score"], "number");
         const reason = findValue(r, ["reason", "why", "explain"], "string");
-        const topics = Array.isArray(r.topics) ? r.topics.join(", ") : "";
+        const level = esc(r.level || "Beginner");
+        const levelClass = "level-" + (r.level || "Beginner").toLowerCase();
+        const category = esc(r.category || "Workshop");
+        const topics = Array.isArray(r.topics) ? r.topics : [];
+        const matchingTopics = Array.isArray(r.matching_topics) ? r.matching_topics : [];
+
+        const topicsBadges = topics.map(function (t) {
+            const isMatch = matchingTopics.some(function (m) { return m.toLowerCase() === t.toLowerCase(); });
+            const badgeStyle = isMatch
+                ? 'style="color:var(--neon-green,#10b981);border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.15);font-weight:700;"'
+                : '';
+            return '<span class="rec-topic-tag" ' + badgeStyle + '>' + (isMatch ? '✓ ' : '') + esc(t) + '</span>';
+        }).join("");
+
         return (
-            '<div style="border:1px solid rgba(0,229,255,.35);border-radius:14px;padding:16px;margin-top:12px;background:rgba(255,255,255,.04)">' +
-            '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">' +
-            "<strong>" + esc(r.icon || "") + " " + esc(r.title) + "</strong>" +
-            (match !== null ? '<span style="color:#00e5ff;font-weight:700">' + esc(Math.round(match)) + "% match</span>" : "") +
-            "</div>" +
-            '<div style="opacity:.8;margin-top:6px;font-size:.9rem">' +
-            esc(r.date || "") + " " + esc(r.time || "") + " | " + esc(r.location || "") + " | Level: " + esc(r.level || "") +
-            "</div>" +
-            (topics ? '<div style="margin-top:6px;font-size:.85rem">Topics: ' + esc(topics) + "</div>" : "") +
-            (reason ? '<p style="margin:10px 0 0">&#10024; ' + esc(reason) + "</p>" : "") +
-            '<button type="button" class="btn btn-primary" data-reg-id="' + esc(r.id) + '" style="margin-top:12px">Register</button>' +
-            "</div>"
+            '<article class="recommended-card">' +
+                '<div class="rec-card-header">' +
+                    '<div class="rec-card-meta">' +
+                        '<span class="rec-badge-category">' + category + '</span>' +
+                        '<span class="rec-badge-level ' + levelClass + '">' + level + '</span>' +
+                    '</div>' +
+                    (match !== null ? (
+                        '<div class="rec-match-pill">' +
+                            '<span class="rec-sparkle">✨</span>' +
+                            '<span>' + esc(Math.round(match)) + '% Match</span>' +
+                        '</div>'
+                    ) : '') +
+                '</div>' +
+
+                '<div class="rec-card-body">' +
+                    '<div class="rec-title-row">' +
+                        '<span class="rec-icon">' + esc(r.icon || "🪐") + '</span>' +
+                        '<h3 class="rec-event-title">' + esc(r.title) + '</h3>' +
+                    '</div>' +
+
+                    (reason ? (
+                        '<div class="rec-why-box">' +
+                            '<div class="rec-why-label">' +
+                                '<span class="rec-sparkle">🤖</span>' +
+                                '<span class="rec-ai-indicator">Personalized AI Match Analysis</span>' +
+                            '</div>' +
+                            '<p class="rec-why-text">"' + esc(reason) + '"</p>' +
+                        '</div>'
+                    ) : '') +
+
+                    (topicsBadges ? (
+                        '<div class="rec-matching-topics">' +
+                            '<span>Key Topics:</span>' +
+                            '<div class="rec-topics-tags">' + topicsBadges + '</div>' +
+                        '</div>'
+                    ) : '') +
+
+                    '<div class="rec-info-strip">' +
+                        '<span>📅 ' + esc(r.date || "") + '</span>' +
+                        '<span>⏰ ' + esc(r.time || "") + '</span>' +
+                        '<span>📍 ' + esc(r.location || "") + '</span>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="rec-card-footer">' +
+                    '<span class="rec-seats">🔥 ' + esc(r.seats_left != null ? r.seats_left : 20) + ' seats remaining</span>' +
+                    '<button type="button" class="btn btn-primary btn-micro" data-reg-id="' + esc(r.id) + '">' +
+                        '<span>Reserve Pass 🎫</span>' +
+                    '</button>' +
+                '</div>' +
+            '</article>'
         );
     }
 
     function goRegister(id) {
-        const sel = document.querySelector('select[name="event_id"], select[id*="event_id"], select[id*="event-id"]');
+        if (typeof playTechTone === "function") {
+            try { playTechTone("click"); } catch (_) {}
+        }
+        const sel = document.getElementById("event-select") || document.querySelector('select[name="event_id"], select[id*="event_id"], select[id*="event-id"]');
         if (sel) sel.value = String(id);
         const reg = document.getElementById("registration-section") || document.querySelector(".registration-section");
-        if (reg) reg.scrollIntoView({ behavior: "smooth" });
+        if (reg) {
+            reg.scrollIntoView({ behavior: "smooth" });
+            const nameInput = document.getElementById("student-name");
+            if (nameInput) setTimeout(function () { nameInput.focus(); }, 350);
+        }
     }
 
     function init() {
@@ -72,16 +131,31 @@
             return;
         }
 
-        const box = document.createElement("div");
-        box.id = "live-recommend-results";
-        section.appendChild(box);
+        const grid = document.getElementById("recommendations-grid") || section.querySelector(".recommendations-grid");
+        const emptyState = document.getElementById("rec-empty-state") || section.querySelector(".rec-empty-state");
 
-        box.addEventListener("click", function (e) {
+        let box = document.getElementById("live-recommend-results");
+        if (!box) {
+            box = document.createElement("div");
+            box.id = "live-recommend-results";
+            box.style.display = "contents";
+            if (grid) {
+                grid.appendChild(box);
+            } else {
+                section.appendChild(box);
+            }
+        }
+
+        section.addEventListener("click", function (e) {
             const target = e.target.closest("[data-reg-id]");
             if (target) goRegister(target.getAttribute("data-reg-id"));
         });
 
         btn.addEventListener("click", async function () {
+            if (typeof playTechTone === "function") {
+                try { playTechTone("pulse"); } catch (_) {}
+            }
+
             // Read every ticked checkbox inside the Personalize section
             const interests = Array.from(
                 section.querySelectorAll('#interest-checkboxes input:checked, input[type="checkbox"]:checked')
@@ -93,20 +167,44 @@
             const level = ["Advanced", "Intermediate", "Beginner"].find(function (l) { return text.includes(l); }) || "Beginner";
 
             if (!uniqueInterests.length) {
-                box.innerHTML = '<p style="margin-top:12px">Please select at least one interest.</p>';
+                if (emptyState) {
+                    emptyState.style.display = "block";
+                    emptyState.innerHTML = '<div class="empty-icon">⚠️</div><h3>No Interests Selected</h3><p>Please check at least one interest chip above to generate personalized recommendations.</p>';
+                }
+                if (grid) grid.style.display = "none";
+                box.innerHTML = '';
                 return;
             }
 
             btn.disabled = true;
-            box.innerHTML = '<p style="margin-top:12px">Finding the best events for you...</p>';
+            if (emptyState) {
+                emptyState.style.display = "block";
+                emptyState.innerHTML = '<div class="empty-icon">⚡</div><h3>Synthesizing AI Recommendations...</h3><p>Matching your interest profile against upcoming workshops and computing difficulty alignment...</p>';
+            }
+            if (grid) grid.style.display = "none";
+            box.innerHTML = '';
+
             try {
                 const data = await callApi({ interests: uniqueInterests, skill_level: level });
                 const list = data.recommendations || [];
-                box.innerHTML = list.length
-                    ? list.map(cardHtml).join("")
-                    : '<p style="margin-top:12px">No matching events. Try other interests.</p>';
+
+                if (list.length > 0) {
+                    if (emptyState) emptyState.style.display = "none";
+                    if (grid) grid.style.display = "grid";
+                    box.innerHTML = list.map(cardHtml).join("");
+                } else {
+                    if (emptyState) {
+                        emptyState.style.display = "block";
+                        emptyState.innerHTML = '<div class="empty-icon">🔍</div><h3>No Direct Matches</h3><p>Try selecting other interest categories to explore available workshops.</p>';
+                    }
+                    if (grid) grid.style.display = "none";
+                }
             } catch (err) {
-                box.innerHTML = '<p style="margin-top:12px;color:#ff6b6b">Could not reach the backend. Is it running on port 8000?</p>';
+                if (emptyState) {
+                    emptyState.style.display = "block";
+                    emptyState.innerHTML = '<div class="empty-icon">⚠️</div><h3 style="color:#f43f5e">Backend Connection Failed</h3><p>Could not reach the FastAPI backend on port 8000. Please ensure the backend server is running: <code>uvicorn main:app --port 8000</code></p>';
+                }
+                if (grid) grid.style.display = "none";
             }
             btn.disabled = false;
         });
