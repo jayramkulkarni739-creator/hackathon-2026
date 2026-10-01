@@ -12,43 +12,47 @@
  */
 
 // ==========================================================================
-// 1. API Configuration & Dual-Host Auto-Fallback
+// 1. API Configuration & Multi-Host Fallback (Localhost + Render Cloud)
 // ==========================================================================
-let activeApiHost = window.location.hostname === "localhost" ? "http://localhost:8000" : "http://127.0.0.1:8000";
+function getCandidateHosts() {
+  const custom = localStorage.getItem("novasphere_backend_url");
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const hosts = [];
+  if (custom) hosts.push(custom.replace(/\/+$/, ""));
+  if (isLocal) {
+    hosts.push("http://localhost:8000", "http://127.0.0.1:8000");
+  }
+  hosts.push("https://novasphere-backend.onrender.com");
+  return hosts;
+}
+
+let activeApiHost = getCandidateHosts()[0];
 
 async function apiFetch(endpoint, options = {}) {
+  const hosts = getCandidateHosts();
   const t0 = performance.now();
-  try {
-    const res = await fetch(`${activeApiHost}${endpoint}`, options);
-    const duration = Math.round(performance.now() - t0);
-    const hudLat = document.getElementById("hud-latency");
-    if (hudLat) hudLat.textContent = `${duration}ms`;
-    if (window.logDevTelemetry) {
-      window.logDevTelemetry("REST_200", `${options.method || "GET"} ${endpoint} (${duration}ms)`);
-    }
-    return res;
-  } catch (err) {
-    // If request fails, automatically attempt the alternate host
-    const alternateHost = activeApiHost.includes("localhost")
-      ? "http://127.0.0.1:8000"
-      : "http://localhost:8000";
+  let lastErr;
+
+  for (const host of hosts) {
     try {
-      const altRes = await fetch(`${alternateHost}${endpoint}`, options);
+      const res = await fetch(`${host}${endpoint}`, options);
       const duration = Math.round(performance.now() - t0);
       const hudLat = document.getElementById("hud-latency");
       if (hudLat) hudLat.textContent = `${duration}ms`;
       if (window.logDevTelemetry) {
-        window.logDevTelemetry("REST_FALLBACK", `${options.method || "GET"} ${endpoint} via ${alternateHost} (${duration}ms)`);
+        window.logDevTelemetry("REST_200", `${options.method || "GET"} ${endpoint} via ${host} (${duration}ms)`);
       }
-      activeApiHost = alternateHost; // Switch to the responsive host
-      return altRes;
-    } catch {
-      if (window.logDevTelemetry) {
-        window.logDevTelemetry("REST_ERR", `Failed ${options.method || "GET"} ${endpoint}`);
-      }
-      throw err;
+      activeApiHost = host;
+      return res;
+    } catch (err) {
+      lastErr = err;
     }
   }
+
+  if (window.logDevTelemetry) {
+    window.logDevTelemetry("REST_ERR", `Failed ${options.method || "GET"} ${endpoint} across all endpoints`);
+  }
+  throw lastErr;
 }
 
 // ==========================================================================
@@ -160,21 +164,48 @@ function showToast(message, type = "info") {
 async function checkBackendHealth() {
   const pulse = document.getElementById("status-pulse");
   const label = document.getElementById("status-label");
+  const badge = document.getElementById("api-status-badge");
   if (!pulse || !label) return;
+
+  if (badge && !badge._hasClickListener) {
+    badge._hasClickListener = true;
+    badge.style.cursor = "pointer";
+    badge.title = "Click to set or update your Render Backend URL";
+    badge.addEventListener("click", () => {
+      const current = localStorage.getItem("novasphere_backend_url") || activeApiHost;
+      const input = prompt("Enter your Render Backend URL (e.g. https://novasphere-backend.onrender.com):", current);
+      if (input !== null) {
+        const cleaned = input.trim().replace(/\/+$/, "");
+        if (cleaned) {
+          localStorage.setItem("novasphere_backend_url", cleaned);
+          activeApiHost = cleaned;
+          showToast(`Backend updated to: ${cleaned}`, "success");
+        } else {
+          localStorage.removeItem("novasphere_backend_url");
+          activeApiHost = getCandidateHosts()[0];
+          showToast("Reset to default host", "info");
+        }
+        checkBackendHealth();
+        fetchEvents(true);
+      }
+    });
+  }
 
   try {
     const res = await apiFetch("/", { method: "GET" });
     if (res.ok) {
       pulse.className = "status-pulse online";
-      label.textContent = "FastAPI Online (8000)";
+      const isRender = activeApiHost.includes("onrender.com");
+      label.textContent = isRender ? "Render Cloud Online" : "FastAPI Online (8000)";
       label.style.color = "var(--neon-green)";
     } else {
       throw new Error("Backend offline");
     }
   } catch (e) {
     pulse.className = "status-pulse offline";
-    label.textContent = "Backend Offline (Run uvicorn)";
-    label.style.color = "var(--accent-rose)";
+    const isVercel = window.location.hostname.includes("vercel.app");
+    label.textContent = isVercel ? "Click to connect Render API" : "Backend Offline (Run uvicorn)";
+    label.style.color = "var(--accent-amber)";
   }
 }
 

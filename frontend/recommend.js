@@ -1,16 +1,21 @@
 // recommend.js - connects the "Recommend for me" button to POST /api/recommend with modern cyberpunk 3D aesthetics
 (function () {
-    const HOSTS = ["http://127.0.0.1:8000", "http://localhost:8000"];
-
-    function esc(t) {
-        return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) {
-            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-        });
+    function getHosts() {
+        const custom = localStorage.getItem("novasphere_backend_url");
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const list = [];
+        if (custom) list.push(custom.replace(/\/+$/, ""));
+        if (isLocal) {
+            list.push("http://127.0.0.1:8000", "http://localhost:8000");
+        }
+        list.push("https://novasphere-backend.onrender.com");
+        return list;
     }
 
     async function callApi(payload) {
         let lastErr;
-        for (const host of HOSTS) {
+        const hosts = getHosts();
+        for (const host of hosts) {
             try {
                 const res = await fetch(host + "/api/recommend", {
                     method: "POST",
