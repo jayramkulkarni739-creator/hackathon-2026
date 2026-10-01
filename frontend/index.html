@@ -24,6 +24,76 @@
 
 <body>
 
+  <!-- First-Time 3D Holographic Pop-Out Portal Overlay -->
+  <div id="first-open-popout" class="popout-overlay" aria-modal="true" role="dialog">
+    <div class="popout-backdrop" id="popout-backdrop"></div>
+    <div class="popout-shockwave" id="popout-shockwave"></div>
+
+    <div class="popout-card" id="popout-card">
+      <div class="popout-tech-header">
+        <div class="popout-tag">
+          <span class="popout-blink-dot"></span>
+          <span>FIRST-TIME ACCESS DETECTED</span>
+        </div>
+        <button id="popout-close-btn" class="popout-close-btn" type="button" aria-label="Close Pop-Out" title="Skip Intro">✕</button>
+      </div>
+
+      <div class="popout-visual-stage">
+        <div class="popout-holo-orb">
+          <div class="holo-ring holo-ring-1"></div>
+          <div class="holo-ring holo-ring-2"></div>
+          <div class="holo-ring holo-ring-3"></div>
+          <div class="holo-core-glyph">🪐</div>
+        </div>
+        <div class="popout-scanner-line"></div>
+      </div>
+
+      <div class="popout-body">
+        <div class="popout-sys-code">// NEURAL_SYNC :: READY</div>
+        <h2 class="popout-title">
+          NOVASPHERE<br>
+          <span class="popout-title-glow">PERSONALIZED AI EXPERIENCES</span>
+        </h2>
+        <p class="popout-desc">
+          Welcome to the 2026 Student Innovation Cyber-Deck. Initializing 3D spatial graphics, neural event recommendations, and real-time FastAPI telemetry.
+        </p>
+
+        <div class="popout-features-grid">
+          <div class="popout-feat-item">
+            <span class="feat-ico">🪐</span>
+            <span class="feat-txt">3D Spatial Core</span>
+          </div>
+          <div class="popout-feat-item">
+            <span class="feat-ico">🧠</span>
+            <span class="feat-txt">AI Recommender</span>
+          </div>
+          <div class="popout-feat-item">
+            <span class="feat-ico">⚡</span>
+            <span class="feat-txt">FastAPI Telemetry</span>
+          </div>
+          <div class="popout-feat-item">
+            <span class="feat-ico">💳</span>
+            <span class="feat-txt">3D Holographic Pass</span>
+          </div>
+        </div>
+
+        <div class="popout-action-row">
+          <button id="popout-enter-btn" class="btn-popout-primary" type="button">
+            <span class="btn-shine"></span>
+            <span class="btn-label">⚡ POP OUT &amp; ENTER DECK</span>
+          </button>
+          <button id="popout-skip-btn" class="btn-popout-secondary" type="button">
+            <span>Direct Access</span>
+          </button>
+        </div>
+
+        <div class="popout-footer-note">
+          <span class="hud-dot"></span> 3D Spatial Gyroscope Active &bull; Sound Synths Ready
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 3D Spatial Particle Canvas Background -->
   <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
@@ -45,6 +115,13 @@
       </a>
 
       <div class="nav-actions">
+        <!-- Replay 3D Pop-Out Intro Button -->
+        <button id="replay-popout-btn" class="nav-control-btn popout-replay-btn" type="button" aria-label="Replay 3D Pop-Out Entrance"
+          title="Replay 3D Pop-Out Entrance">
+          <span class="popout-replay-icon">⚡</span>
+          <span class="popout-replay-text">POP-OUT</span>
+        </button>
+
         <!-- Live API Status Indicator -->
         <div class="api-status-badge" id="api-status-badge" title="FastAPI Backend Health Status">
           <span class="status-pulse" id="status-pulse"></span>

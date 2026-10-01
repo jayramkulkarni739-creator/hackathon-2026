@@ -129,6 +129,28 @@ function playTechTone(type = "click") {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
       osc.start(now);
       osc.stop(now + 0.08);
+    } else if (type === "warp") {
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(90, now);
+      osc.frequency.exponentialRampToValueAtTime(920, now + 0.4);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+      osc.start(now);
+      osc.stop(now + 0.55);
+
+      try {
+        const chime = audioCtx.createOscillator();
+        const chimeGain = audioCtx.createGain();
+        chime.type = "sine";
+        chime.connect(chimeGain);
+        chimeGain.connect(audioCtx.destination);
+        chime.frequency.setValueAtTime(1046.5, now + 0.12);
+        chime.frequency.exponentialRampToValueAtTime(2093, now + 0.45);
+        chimeGain.gain.setValueAtTime(0.12, now + 0.12);
+        chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        chime.start(now + 0.12);
+        chime.stop(now + 0.55);
+      } catch (_) {}
     }
   } catch (e) {
     // Graceful silent fallback if Web Audio is restricted
@@ -1489,6 +1511,112 @@ window.logDevTelemetry = function(tag, msg, payload = null) {
 };
 
 // ==========================================================================
+// 15B. First-Time 3D Holographic Pop-Out Engine
+// ==========================================================================
+function initFirstTimePopout() {
+  const overlay = document.getElementById("first-open-popout");
+  const enterBtn = document.getElementById("popout-enter-btn");
+  const skipBtn = document.getElementById("popout-skip-btn");
+  const closeBtn = document.getElementById("popout-close-btn");
+  const replayBtn = document.getElementById("replay-popout-btn");
+  const shockwave = document.getElementById("popout-shockwave");
+  const backdrop = document.getElementById("popout-backdrop");
+
+  if (!overlay) return;
+
+  const hasSeen = localStorage.getItem("novasphere_popout_seen");
+
+  function triggerPopOutSequence(isManual = false) {
+    overlay.classList.remove("pop-exit");
+    overlay.classList.add("active");
+    if (shockwave) shockwave.classList.remove("expanding");
+
+    playTechTone("pulse");
+
+    if (window.logDevTelemetry) {
+      window.logDevTelemetry("POPOUT_INIT", isManual ? "Manual 3D Pop-Out Replay requested" : "First-time visitor detected: 3D Holographic Portal engaged");
+    }
+  }
+
+  function completePopOutEntrance() {
+    playTechTone("warp");
+
+    if (shockwave) {
+      shockwave.classList.remove("expanding");
+      void shockwave.offsetWidth;
+      shockwave.classList.add("expanding");
+    }
+
+    overlay.classList.add("pop-exit");
+
+    if (typeof core3DControls !== "undefined") {
+      if (typeof core3DControls.pulseTrigger === "function") {
+        core3DControls.pulseTrigger();
+      }
+      core3DControls.speedMultiplier = 3.5;
+      setTimeout(() => {
+        core3DControls.speedMultiplier = 1.0;
+      }, 1600);
+    }
+
+    const heroSec = document.querySelector(".hero-section");
+    const mainEl = document.querySelector("main");
+    if (heroSec) {
+      heroSec.classList.remove("frontend-popping-out");
+      void heroSec.offsetWidth;
+      heroSec.classList.add("frontend-popping-out");
+    }
+    if (mainEl) {
+      mainEl.classList.remove("frontend-popping-out");
+      void mainEl.offsetWidth;
+      mainEl.classList.add("frontend-popping-out");
+    }
+
+    if (typeof triggerConfetti === "function") {
+      setTimeout(() => {
+        triggerConfetti();
+      }, 350);
+    }
+
+    localStorage.setItem("novasphere_popout_seen", "true");
+
+    setTimeout(() => {
+      overlay.classList.remove("active");
+      overlay.classList.remove("pop-exit");
+      if (shockwave) shockwave.classList.remove("expanding");
+    }, 800);
+
+    if (window.logDevTelemetry) {
+      window.logDevTelemetry("POPOUT_SURGE", "Frontend 3D perspective pop-out sequence completed successfully");
+    }
+  }
+
+  if (enterBtn) enterBtn.addEventListener("click", completePopOutEntrance);
+  if (skipBtn) skipBtn.addEventListener("click", completePopOutEntrance);
+  if (closeBtn) closeBtn.addEventListener("click", completePopOutEntrance);
+  if (backdrop) backdrop.addEventListener("click", completePopOutEntrance);
+
+  if (replayBtn) {
+    replayBtn.addEventListener("click", () => {
+      triggerPopOutSequence(true);
+    });
+  }
+
+  // Auto-launch pop-out on first open!
+  if (!hasSeen) {
+    setTimeout(() => {
+      triggerPopOutSequence(false);
+    }, 250);
+  } else {
+    // If visited before, still give hero high-tech 3D pop-out entrance
+    const heroSec = document.querySelector(".hero-section");
+    if (heroSec) {
+      heroSec.classList.add("frontend-popping-out");
+    }
+  }
+}
+
+// ==========================================================================
 // 16. Initialization on DOM Ready
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -1499,6 +1627,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchEvents();
   initHero3DStage();
   initParticleCanvas();
+  initFirstTimePopout();
 
   const clearBtn = document.getElementById("clear-terminal-btn");
   if (clearBtn) {
